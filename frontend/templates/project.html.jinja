@@ -1,0 +1,65 @@
+{% extends "base.html.jinja" %}
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <h1>Projects</h1>
+    </div>
+</div>
+<div class="container mt-4">
+    <div class="row">
+        <h3>On Going</h3>
+    </div>
+</div>
+<div class="container mt-4">
+    <div class="row">
+        {% for project in projects %}
+        {% if project.status == "On Going"%}
+        <div class="col-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ project.name }}</h5>
+                    {% if project.choir.name %}
+                    <h6 class="card-subtitle mb-2 text-body-secondary">{{ project.choir.name }}</h6>
+                    {% else %}
+                    <h6 class="card-subtitle mb-2 text-body-secondary"><em>no choir</em></h6>
+                    {% endif %}
+                    <a href="{{ url_for('project.tasks',project_name=project.name) }}" class="card-link">Go to project</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+<div class="container mt-4">
+    <div class="row">
+        <h3>Completed</h3>
+    </div>
+</div>
+<div class="container mt-4">
+    <div class="row">
+        {% for project in projects %}
+        {% if project.status != "On Going" and project.status %}
+        <div class="col-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    {% if project.status == "Cancelled" %}
+                    <h5 class="card-title text-body-secondary">[Cancelled] {{ project.name }}</h5>
+                    {% else %}
+                    <h5 class="card-title">{{ project.name }}</h5>                    
+                    {% endif %}
+                    {% if project.choir.name %}
+                    <h6 class="card-subtitle mb-2 text-body-secondary">{{ project.choir.name }}</h6>
+                    {% else %}
+                    <h6 class="card-subtitle mb-2 text-body-secondary"><em>no choir</em></h6>
+                    {% endif %}
+                    <a href="{{ url_for('project.tasks',project_name=project.name) }}" class="card-link">Go to project</a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock content %}

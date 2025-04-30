@@ -1,0 +1,6 @@
+.venv
+.env
+instance
+database_json
+
+__pycache__

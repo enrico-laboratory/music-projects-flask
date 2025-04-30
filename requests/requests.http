@@ -1,0 +1,34 @@
+@hostname = http://localhost:5000
+@project_path = projects
+
+###
+GET {{hostname}}/{{project_path}}/choir
+### 
+GET {{hostname}}/{{project_path}}/choir/1
+
+###
+GET {{hostname}}/{{project_path}}/contact
+### 
+GET {{hostname}}/{{project_path}}/contact/1
+
+###
+GET {{hostname}}/{{project_path}}/location
+### 
+GET {{hostname}}/{{project_path}}/location/1
+
+###
+GET {{hostname}}/{{project_path}}/music
+### 
+GET {{hostname}}/{{project_path}}/music/1
+
+###
+GET {{hostname}}/{{project_path}}/music_project
+### 
+GET {{hostname}}/{{project_path}}/music_project/1
+
+### 
+GET {{hostname}}/{{project_path}}/task
+### 
+GET {{hostname}}/{{project_path}}/task/45
+### 
+GET {{hostname}}/{{project_path}}/task?filter=Palestrina and Marenzio&sort=older
