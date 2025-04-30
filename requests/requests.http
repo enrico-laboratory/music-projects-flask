@@ -26,6 +26,16 @@ GET {{hostname}}/{{project_path}}/music_project
 ### 
 GET {{hostname}}/{{project_path}}/music_project/1
 
+###
+GET {{hostname}}/{{project_path}}/part_allocation
+### 
+GET {{hostname}}/{{project_path}}/part_allocation/1
+
+###
+GET {{hostname}}/{{project_path}}/role
+### 
+GET {{hostname}}/{{project_path}}/role/1
+
 ### 
 GET {{hostname}}/{{project_path}}/task
 ### 

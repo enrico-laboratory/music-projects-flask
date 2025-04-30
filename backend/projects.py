@@ -11,6 +11,8 @@ from backend.schemas import (
     PlainLocationSchema,
     PlainMusicSchema,
     PlainMusicProjectSchema,
+    PlainPartAllocationSchema,
+    PlainRoleSchema,
     PlainTaskSchema
 )
 
@@ -20,6 +22,8 @@ from notion_db import (
     LocationTable,
     MusicTable,
     MusicProjectTable,
+    PartAllocationTable,
+    RoleTable,
     TaskTable,
 )
 
@@ -31,8 +35,7 @@ class Choir(MethodView):
 
     @blp.response(200, PlainChoirSchema)
     def get(self, choir_id):
-        choir = db.get_or_404(ChoirTable, choir_id)
-        return choir
+        return db.get_or_404(ChoirTable, choir_id)
 
 
 @blp.route('/choir')
@@ -51,8 +54,7 @@ class Contact(MethodView):
 
     @blp.response(200, PlainContactSchema)
     def get(self, contact_id):
-        choir = db.get_or_404(ContactTable, contact_id)
-        return choir
+        return db.get_or_404(ContactTable, contact_id)
 
 
 @blp.route('/contact')
@@ -68,8 +70,7 @@ class Location(MethodView):
 
     @blp.response(200, PlainLocationSchema)
     def get(self, location_id):
-        choir = db.get_or_404(LocationTable, location_id)
-        return choir
+        return db.get_or_404(LocationTable, location_id)
 
 
 @blp.route('/location')
@@ -79,13 +80,13 @@ class LocationList(MethodView):
     def get(self):
         return db.session.query(LocationTable).all()
 
+
 @blp.route('/music/<int:music_id>')
 class Music(MethodView):
 
     @blp.response(200, PlainMusicSchema)
     def get(self, music_id):
-        choir = db.get_or_404(MusicTable, music_id)
-        return choir
+        return db.get_or_404(MusicTable, music_id)
 
 
 @blp.route('/music')
@@ -94,15 +95,14 @@ class MusicList(MethodView):
     @blp.response(200, PlainMusicSchema(many=True))
     def get(self):
         return db.session.query(MusicTable).all()
-    
+
 
 @blp.route('/music_project/<int:music_project_id>')
 class MusicProject(MethodView):
 
     @blp.response(200, PlainMusicProjectSchema)
     def get(self, music_project_id):
-        music_project = db.get_or_404(MusicProjectTable, music_project_id)
-        return music_project
+        return db.get_or_404(MusicProjectTable, music_project_id)
 
 
 @blp.route('/music_project')
@@ -113,12 +113,63 @@ class MusicProjectList(MethodView):
         return db.session.query(MusicProjectTable).all()
 
 
+@blp.route('/part_allocation/<int:part_allocation_id>')
+class PartAllocation(MethodView):
+
+    @blp.response(200, PlainPartAllocationSchema)
+    def get(self, part_allocation_id):
+        try:
+            return db.get_or_404(PartAllocationTable, part_allocation_id)
+        except:
+            abort(500)
+
+
+@blp.route('/part_allocation')
+class PartAllocationList(MethodView):
+
+    @blp.response(200, PlainPartAllocationSchema(many=True))
+    def get(self):
+        try:
+            return db.session.query(PartAllocationTable).all()
+        except:
+            abort(500)
+
+
+
+
+@blp.route('/role/<int:role_id>')
+class Role(MethodView):
+
+    @blp.response(200, PlainRoleSchema)
+    def get(self, role_id):
+        try:
+            return db.get_or_404(RoleTable, role_id)
+        except:
+            abort(500)
+
+
+@blp.route('/role')
+class RoleLIst(MethodView):
+
+    @blp.response(200, PlainRoleSchema(many=True))
+    def get(self):
+        try:
+            return db.session.query(RoleTable).all()
+        except:
+            abort(500)
+
+
+
 @blp.route('/task/<int:task_id>')
 class Task(MethodView):
 
     @blp.response(200, PlainTaskSchema)
     def get(self, task_id):
-        return db.get_or_404(TaskTable, task_id)
+        try:
+            response = db.get_or_404(TaskTable, task_id)
+        except:
+            abort(500)
+        return response
 
 
 @blp.route('/task')
