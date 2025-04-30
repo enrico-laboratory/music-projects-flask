@@ -169,11 +169,16 @@ def get_builder(builder_class: Builder, page: dict, ) -> Builder:
 
     return builder_obj
 
-
+def delete_database_file_if_exists(database_path: str):
+    database = Path(database_path)
+    
+    if database.is_file():
+        os.remove(database)
+    
 def main():
 
-    os.remove(
-        f'{MUSIC_PROJECT_SQLITE_DB_FOLDER}{MUSIC_PROJECT_SQLITE_DB_FILENAME}')
+    database_path = f'{MUSIC_PROJECT_SQLITE_DB_FOLDER}{MUSIC_PROJECT_SQLITE_DB_FILENAME}'
+    delete_database_file_if_exists(database_path)
 
     app = create_app()
     init_db(app)

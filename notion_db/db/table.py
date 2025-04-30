@@ -22,6 +22,7 @@ class ChoirTable(Base):
     def __repr__(self) -> str:
         return f"ChoirTable(id={self.id!r}, id_notion={self.id_notion!r}, name={self.name!r})"
 
+
 class ContactTable(Base):
     __tablename__ = 'contacts'
 
@@ -92,26 +93,6 @@ class MusicProjectTable(Base):
         return f"MusicProjectTable(id={self.id!r}, name={self.name!r}, year={self.year!r}, choir_id={self.choir_id!r})"
 
 
-class RoleTable(Base):
-    __tablename__ = "role"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(30))
-    id_notion: Mapped[Optional[str]] = mapped_column(String(36))
-    music_project_id: Mapped[int] = mapped_column(
-        ForeignKey("music_project.id"))
-    contact_id: Mapped[int] = mapped_column(ForeignKey("contacts.id"))
-    note: Mapped[Optional[str]] = mapped_column(String())
-    status: Mapped[Optional[str]] = mapped_column(String())
-
-    music_project = relationship(
-        "MusicProjectTable", foreign_keys=[music_project_id])
-    contact = relationship("ContactTable", foreign_keys=[contact_id])
-
-    def __repr__(self) -> str:
-        return f"RoleTable(id={self.id!r}, name={self.name!r}, music_project_id={self.music_project_id!r}, contact_id={self.contact_id!r}, status={self.status!r})"
-
-
 class PartAllocationTable(Base):
     __tablename__ = 'part_allocation'
 
@@ -143,6 +124,26 @@ class PartAllocationTable(Base):
 
     def __repr__(self) -> str:
         return f"PartAllocationTable(id={self.id!r}, name={self.name!r}, music_id={self.music_id!r}, music_project_id={self.music_project_id!r}, staff_1={self.staff_1!r})"
+
+
+class RoleTable(Base):
+    __tablename__ = "role"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(30))
+    id_notion: Mapped[Optional[str]] = mapped_column(String(36))
+    music_project_id: Mapped[int] = mapped_column(
+        ForeignKey("music_project.id"))
+    contact_id: Mapped[int] = mapped_column(ForeignKey("contacts.id"))
+    note: Mapped[Optional[str]] = mapped_column(String())
+    status: Mapped[Optional[str]] = mapped_column(String())
+
+    music_project = relationship(
+        "MusicProjectTable", foreign_keys=[music_project_id])
+    contact = relationship("ContactTable", foreign_keys=[contact_id])
+
+    def __repr__(self) -> str:
+        return f"RoleTable(id={self.id!r}, name={self.name!r}, music_project_id={self.music_project_id!r}, contact_id={self.contact_id!r}, status={self.status!r})"
 
 
 class TaskTable(Base):
