@@ -1,21 +1,11 @@
 {% extends "base.html.jinja" %}
 {% block content %}
+{% include "partials/nav-project.html.jinja"%}
 <div class="container-md">
     <div class="row">
-        <h1>Task</h1>
+        <h1>{{ title }}</h1>
     </div>
-    <div class="row">
-        <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                aria-expanded="false">
-                Sort
-            </button>
-            <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="?sort=older">Older</a></li>
-                <li><a class="dropdown-item" href="?sort=newer">Newer</a></li>
-            </ul>
-        </div>
-    </div>
+    {% include "tools/sort-button.html.jinja"%}
     <div class="row">
         <table class="table">
             <thead>
@@ -27,19 +17,22 @@
                 </tr>
             </thead>
             <tbody>
+            {% set list_to_check = tasks %}
+            {% include "tools/table-not-available.html.jinja"%}
                 {% for task in tasks %}
                 <tr>
                     <th scope="row">{{ task.type }}</th>
-                    <td>{{ task.start_date_time | format_datetime('datetime') }} - {{ task.end_date_time | format_datetime('time') }}</td>
+                    <td>{{ task.start_date_time | format_datetime('datetime') }}{% if task.end_date_time%} - {{
+                        task.end_date_time | format_datetime('time') }}{% endif %}</td>
                     {% if task.name %}
                     <td>{{ task.name }}</td>
                     {% else%}
-                    <td>?</td>
+                    <td></td>
                     {% endif %}
                     {% if task.location %}
                     <td>{{ task.location.name }}</td>
                     {% else%}
-                    <td>?</td>
+                    <td></td>
                     {% endif %}
                 </tr>
                 {% endfor %}

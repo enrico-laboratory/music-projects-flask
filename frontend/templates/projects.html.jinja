@@ -23,7 +23,7 @@
                     {% else %}
                     <h6 class="card-subtitle mb-2 text-body-secondary"><em>no choir</em></h6>
                     {% endif %}
-                    <a href="{{ url_for('project.tasks',project_name=project.name) }}" class="card-link">Go to project</a>
+                    <a href="{{ url_for('project.tasks',project_id=project.id) }}" class="card-link">Go to project</a>
                 </div>
             </div>
         </div>
@@ -53,7 +53,7 @@
                     {% else %}
                     <h6 class="card-subtitle mb-2 text-body-secondary"><em>no choir</em></h6>
                     {% endif %}
-                    <a href="{{ url_for('project.tasks',project_name=project.name) }}" class="card-link">Go to project</a>
+                    <a href="{{ url_for('project.tasks',project_id=project.id) }}" class="card-link">Go to project</a>
                 </div>
             </div>
         </div>

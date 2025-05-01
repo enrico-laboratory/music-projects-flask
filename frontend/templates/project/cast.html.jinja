@@ -1,0 +1,42 @@
+{% extends "base.html.jinja" %}
+{% block content %}
+{% include "partials/nav-project.html.jinja"%}
+<div class="container-md">
+    <div class="row">
+        <h1>{{ title }}</h1>
+    </div>
+    <div class="row">
+        <h3>Confirmed</h3>
+    </div>
+    <div class="row">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th width="5%" scope="col">Role</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Note</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% set list_to_check = cast %}
+                {% include "tools/table-not-available.html.jinja"%}
+                {% for role in cast %}
+                {% if role.status == 'Confirmed' %}
+                <tr>
+                    <th scope="row">{{ role.name }}</th>
+                    <td>{{ role.contact.name }}</td>
+                    <td>{{ role.contact.email1 }}</td>
+                    {% if role.note%}
+                    <td>{{ role.note }}</td>
+                    {% else %}
+                    <td></td>
+                    {% endif %}
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock content %}

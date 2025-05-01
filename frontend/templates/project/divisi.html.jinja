@@ -1,0 +1,74 @@
+{% extends "base.html.jinja" %}
+{% block content %}
+{% include "partials/nav-project.html.jinja"%}
+<div class="container-md">
+    <div class="row">
+        <h1>{{ title }}</h1>
+    </div>
+    <div class="row">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th width="5%" scope="col">#</th>
+                    <th scope="col">Music</th>
+                    {% for n in range(part_allocation_range) %}
+                    {% if n == 0 %}
+                    <th class="text-center" width="10%" scope="col">Top staff</th>
+                    {% elif n == part_allocation_range - 1%}
+                    <th class="text-center" width="10%" scope="col">Bottom</th>
+                    {% else %}
+                    <th class="text-center" width="10%" scope="col">{{n + 1}}</th>
+                    {% endif %}
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% set list_to_check = part_allocation %}
+                {% include "tools/table-not-available.html.jinja"%}
+                {% for music in part_allocation %}
+                <tr>
+                    <th scope="row">{{ music.name }}</th>
+                    <td>{{ music.music.name }}</td>
+                    {% if music.staff_1 %}
+                    <td class="text-center">{{ music.staff_1 }}</td>
+                    {% endif %}
+                    {% if music.staff_2 %}
+                    <td class="text-center">{{ music.staff_2 }}</td>
+                    {% endif %}
+                    {% if music.staff_3 %}
+                    <td class="text-center">{{ music.staff_3 }}</td>
+                    {% endif %}
+                    {% if music.staff_4 %}
+                    <td class="text-center">{{ music.staff_4 }}</td>
+                    {% endif %}
+                    {% if music.staff_5 %}
+                    <td class="text-center">{{ music.staff_5 }}</td>
+                    {% endif %}
+                    {% if music.staff_6 %}
+                    <td class="text-center">{{ music.staff_6 }}</td>
+                    {% endif %}
+                    {% if music.staff_7 %}
+                    <td class="text-center">{{ music.staff_7 }}</td>
+                    {% endif %}
+                    {% if music.staff_8 %}
+                    <td class="text-center">{{ music.staff_8 }}</td>
+                    {% endif %}
+                    {% if music.staff_9 %}
+                    <td class="text-center">{{ music.staff_9 }}</td>
+                    {% endif %}
+                    {% if music.staff_10 %}
+                    <td class="text-center">{{ music.staff_10 }}</td>
+                    {% endif %}
+                    {% if music.staff_11 %}
+                    <td class="text-center">{{ music.staff_11 }}</td>
+                    {% endif %}
+                    {% if music.staff_12 %}
+                    <td class="text-center">{{ music.staff_12 }}</td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock content %}

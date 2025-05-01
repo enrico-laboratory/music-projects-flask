@@ -1,0 +1,24 @@
+<nav class="navbar navbar-expand-lg">
+  <div class="container">
+    <!-- Navbar Links -->
+    <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('project.description',project_id=project_id) }}">Description</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('project.tasks',project_id=project_id) }}">Tasks</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('project.repertoire',project_id=project_id) }}">Repertoire</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('project.part_allocation',project_id=project_id) }}">Part Allocation</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('project.cast',project_id=project_id) }}">Cast</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

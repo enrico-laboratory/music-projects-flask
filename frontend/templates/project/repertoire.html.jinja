@@ -1,0 +1,49 @@
+{% extends "base.html.jinja" %}
+{% block content %}
+{% include "partials/nav-project.html.jinja"%}
+<div class="container-md">
+    <div class="row">
+        <h1>{{ title }}</h1>
+    </div>
+    <div class="row">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th width="5%" scope="col">#</th>
+                    <th scope="col">Music</th>
+                    <th scope="col">Composer</th>
+                    <th scope="col">Duration</th>
+                    <th scope="col">Score</th>
+                    <th scope="col">Recording</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% set list_to_check = repertoire %}
+                {% include "tools/table-not-available.html.jinja"%}
+                {% for music in repertoire %}
+                <tr>
+                    <th scope="row">{{ music.name }}</th>
+                    <td>{{ music.music.name }}</td>
+                    <td>{{ music.music.composer }}</td>
+                    {% if music.music.length %}
+                    <td>{{ music.music.length | format_duration() }}</td>
+                    {% else %}
+                    <td>?</td>
+                    {% endif %}
+                    {% if music.music.score %}
+                    <td><a href="{{ music.music.score }}">score</a></td>
+                    {% else %}
+                    <td>No score available</td>
+                    {% endif %}
+                    {% if music.music.recording %}
+                    <td><a href="{{ music.music.recording }}">recording</a></td>
+                    {% else %}
+                    <td>No recording available</td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock content %}
