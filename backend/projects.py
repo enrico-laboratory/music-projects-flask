@@ -129,12 +129,7 @@ class PartAllocationList(MethodView):
 
     @blp.response(200, PlainPartAllocationSchema(many=True))
     def get(self):
-        try:
-            return db.session.query(PartAllocationTable).all()
-        except:
-            abort(500)
-
-
+        return get_list_by_project_id(PartAllocationTable)
 
 
 @blp.route('/role/<int:role_id>')
@@ -153,10 +148,7 @@ class RoleLIst(MethodView):
 
     @blp.response(200, PlainRoleSchema(many=True))
     def get(self):
-        try:
-            return db.session.query(RoleTable).all()
-        except:
-            abort(500)
+        return get_list_by_project_id(RoleTable)
 
 
 
@@ -191,7 +183,7 @@ class TaskList(MethodView):
                 result = db.session.query(TaskTable).order_by(order_by).all()
             else:
                 result = db.session.query(TaskTable).join(MusicProjectTable).where(
-                    MusicProjectTable.name == filter).order_by(order_by).all()
+                    MusicProjectTable.id == filter).order_by(order_by).all()
 
         except SQLAlchemyError:
             abort(500, message="An error occurred creating the store.")
@@ -200,3 +192,21 @@ class TaskList(MethodView):
 
     def post(self, choir_data):
         pass
+
+
+
+# Helpers
+def get_list_by_project_id(table):
+
+    project_id = request.args.get('project_id', "")
+
+    try:
+        if not project_id:
+            result = db.session.query(table).all()
+        else:
+            result = db.session.query(table).join(MusicProjectTable).where(
+                MusicProjectTable.id == project_id).all()
+    except SQLAlchemyError:
+        abort(500, message="An error occurred fetching the list.")
+
+    return result

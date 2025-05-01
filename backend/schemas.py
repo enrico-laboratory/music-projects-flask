@@ -53,6 +53,7 @@ class PlainMusicProjectSchema(Schema):
 
 class PlainPartAllocationSchema(Schema):
     id = fields.Int(dump_only=True)
+    name = fields.Str()
     staff_1 = fields.Str()
     staff_2 = fields.Str()
     staff_3 = fields.Str()
@@ -67,7 +68,7 @@ class PlainPartAllocationSchema(Schema):
     staff_12 = fields.Str()
     notes = fields.Str()
     selected = fields.Bool()
-    music = fields.Nested(PlainMusicSchema(), dump_only=True, only=["id","name","composer"])
+    music = fields.Nested(PlainMusicSchema(), dump_only=True)
     music_project = fields.Nested(PlainMusicProjectSchema(), dump_only=True, only=["id","name"])
 
 
@@ -76,8 +77,9 @@ class PlainRoleSchema(Schema):
     name = fields.Str()
     note = fields.Str()
     status = fields.Str()
+    contact = fields.Nested(PlainContactSchema(), dump_only=True)
     music_project = fields.Nested(PlainMusicProjectSchema(), dump_only=True, only=['choir', 'id','name'])
-    contact_id = fields.Nested(PlainContactSchema(), dump_only=True)
+
 
 
 class PlainTaskSchema(Schema):
