@@ -5,9 +5,7 @@ from datetime import datetime
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from db_builder import config as c
 from db_builder.db import ProjectBase
-from db_builder import config as c
 from db_builder import (
     Builder,
     MusicProjectBuilder,
@@ -94,23 +92,7 @@ class ProjectNotionToDB:
 
         return
 
-    def __parse_tasks(self, tasks_dict: dict):
-
-        excluded_list = []
-        for i, page in enumerate(tasks_dict['results']):
-            if not page['properties']['Type']['select']:
-                excluded_list.append(i)
-            else:
-                if page['properties']['Type']['select']['name'] != 'Rehearsal' and page['properties']['Type']['select']['name'] != 'Concert':
-                    excluded_list.append(i)
-
-        for index in reversed(excluded_list):
-
-            del tasks_dict['results'][index]
-
-        return tasks_dict
-
-    def __get_foreign_key(self, notion_id: str, table) -> int:
+    def get_foreign_key(self, notion_id: str, table) -> int:
 
         row = self.db_session.query(table).filter_by(
             id_notion=notion_id).first()
@@ -225,138 +207,145 @@ class MusicDB(ProjectNotionToDB):
                             media=builder.properties.media,
                             recording=builder.properties.recording)
 
-    #     self.__print_table(self.app, MusicTable, "Music",
-    #                        print_table=c.PRINT_TABLE_MUSIC)
 
-    #     ### MUSIC PROJECTS ###
-    #     music_projects_dict = self.__get_notion_database_from_file_or_api(
-    #         notion.get_music_projects,
-    #         'music_projects.json',
-    #         from_file=c.FROM_FILE)
+class MusicProjectDB(ProjectNotionToDB):
 
-    #     for page in music_projects_dict['results']:
+    def __init__(self,
+                 db_session: Session,
+                 database_path: str,
+                 notion_db: dict):
+        super().__init__(db_session, database_path, notion_db,
+                         MusicProjectTable, MusicProjectBuilder)
 
-    #         music_project: MusicProjectBuilder = self.__get_builder(
-    #             MusicProjectBuilder, page)
+    def insert_data_in_db(self):
 
-    #         choir_id = self.__get_foreign_key(self.app,
-    #                                           music_project.properties.choir_id,
-    #                                           ChoirTable)
-    #         self.__insert_row(self.app,
-    #                           MusicProjectTable,
-    #                           choir_id=choir_id,
-    #                           id_notion=music_project.properties.id,
-    #                           name=music_project.properties.name,
-    #                           year=music_project.properties.year,
-    #                           status=music_project.properties.status,
-    #                           excerpt=music_project.properties.excerpt,
-    #                           description=music_project.properties.description)
+        for page in self.notion_db['results']:
 
-    #     self.__print_table(self.app, MusicProjectTable, "Music Projects",
-    #                        print_table=c.PRINT_TABLE_MUSIC_PROJECT)
+            builder: Builder = self.get_builder(self.builder, page)
 
-    #     ### PART ALLOCATION ###
-    #     repertoire_dict = self.__get_notion_database_from_file_or_api(
-    #         notion.get_repertoire,
-    #         'repertoire.json',
-    #         from_file=c.FROM_FILE)
+            choir_id = self.get_foreign_key(builder.properties.choir_id,
+                                            ChoirTable)
+            self.insert_row(self.table,
+                            choir_id=choir_id,
+                            id_notion=builder.properties.id,
+                            name=builder.properties.name,
+                            year=builder.properties.year,
+                            status=builder.properties.status,
+                            excerpt=builder.properties.excerpt,
+                            description=builder.properties.description)
 
-    #     for page in repertoire_dict['results']:
 
-    #         part_allocation: PartAllocationBuilder = self.__get_builder(
-    #             PartAllocationBuilder, page)
+class PartAllocationDB(ProjectNotionToDB):
 
-    #         music_project_id = self.__get_foreign_key(self.app,
-    #                                                   part_allocation.properties.music_project_id,
-    #                                                   MusicProjectTable)
+    def __init__(self,
+                 db_session: Session,
+                 database_path: str,
+                 notion_db: dict):
+        super().__init__(db_session, database_path, notion_db,
+                         PartAllocationTable, PartAllocationBuilder)
 
-    #         music_id = self.__get_foreign_key(self.app,
-    #                                           part_allocation.properties.music_id,
-    #                                           MusicTable)
-    #         self.__insert_row(self.app,
-    #                           PartAllocationTable,
-    #                           name=part_allocation.properties.name,
-    #                           music_id=music_id,
-    #                           music_project_id=music_project_id,
-    #                           staff_1=part_allocation.properties.staff_1,
-    #                           staff_2=part_allocation.properties.staff_2,
-    #                           staff_3=part_allocation.properties.staff_3,
-    #                           staff_4=part_allocation.properties.staff_4,
-    #                           staff_5=part_allocation.properties.staff_5,
-    #                           staff_6=part_allocation.properties.staff_6,
-    #                           staff_7=part_allocation.properties.staff_7,
-    #                           staff_8=part_allocation.properties.staff_8,
-    #                           staff_9=part_allocation.properties.staff_9,
-    #                           staff_10=part_allocation.properties.staff_10,
-    #                           staff_11=part_allocation.properties.staff_11,
-    #                           staff_12=part_allocation.properties.staff_12,
-    #                           notes=part_allocation.properties.notes,
-    #                           selected=part_allocation.properties.selected)
+    def insert_data_in_db(self):
 
-    #     self.__print_table(self.app, PartAllocationTable, "Part Allocation",
-    #                        print_table=c.PRINT_TABLE_PART_ALLOCATION)
+        for page in self.notion_db['results']:
 
-    #     ### ROLE ###
-    #     cast_dict = self.__get_notion_database_from_file_or_api(
-    #         notion.get_cast,
-    #         'cast.json',
-    #         from_file=c.FROM_FILE)
+            builder: Builder = self.get_builder(self.builder, page)
 
-    #     for page in cast_dict['results']:
+            music_project_id = self.get_foreign_key(builder.properties.music_project_id,
+                                                    MusicProjectTable)
 
-    #         role: RoleBuilder = self.__get_builder(
-    #             RoleBuilder, page)
+            music_id = self.get_foreign_key(builder.properties.music_id,
+                                            MusicTable)
+            self.insert_row(self.table,
+                            name=builder.properties.name,
+                            music_id=music_id,
+                            music_project_id=music_project_id,
+                            staff_1=builder.properties.staff_1,
+                            staff_2=builder.properties.staff_2,
+                            staff_3=builder.properties.staff_3,
+                            staff_4=builder.properties.staff_4,
+                            staff_5=builder.properties.staff_5,
+                            staff_6=builder.properties.staff_6,
+                            staff_7=builder.properties.staff_7,
+                            staff_8=builder.properties.staff_8,
+                            staff_9=builder.properties.staff_9,
+                            staff_10=builder.properties.staff_10,
+                            staff_11=builder.properties.staff_11,
+                            staff_12=builder.properties.staff_12,
+                            notes=builder.properties.notes,
+                            selected=builder.properties.selected)
 
-    #         music_project_id = self.__get_foreign_key(self.app,
-    #                                                   role.properties.music_project_id,
-    #                                                   MusicProjectTable)
 
-    #         contact_id = self.__get_foreign_key(self.app,
-    #                                             role.properties.contact_id,
-    #                                             ContactTable)
+class RoleDB(ProjectNotionToDB):
 
-    #         self.__insert_row(self.app,
-    #                           RoleTable,
-    #                           name=role.properties.name,
-    #                           id_notion=role.properties.id,
-    #                           music_project_id=music_project_id,
-    #                           contact_id=contact_id,
-    #                           note=role.properties.note,
-    #                           status=role.properties.status)
+    def __init__(self,
+                 db_session: Session,
+                 database_path: str,
+                 notion_db: dict):
+        super().__init__(db_session, database_path, notion_db,
+                         RoleTable, RoleBuilder)
 
-    #     self.__print_table(self.app, RoleTable, "Role",
-    #                        print_table=c.PRINT_TABLE_ROLE)
+    def insert_data_in_db(self):
 
-    #     ### TASKS ###
-    #     tasks_dict_unparsed = self.__get_notion_database_from_file_or_api(
-    #         notion.get_tasks,
-    #         'tasks.json',
-    #         from_file=c.FROM_FILE)
+        for page in self.notion_db['results']:
 
-    #     tasks_dict = self.__parse_tasks(tasks_dict_unparsed)
+            builder: Builder = self.get_builder(self.builder, page)
 
-    #     for page in tasks_dict['results']:
+            music_project_id = self.get_foreign_key(builder.properties.music_project_id,
+                                                    MusicProjectTable)
 
-    #         task: TaskBuilder = self.__get_builder(
-    #             TaskBuilder, page)
+            contact_id = self.get_foreign_key(builder.properties.contact_id,
+                                              ContactTable)
+            self.insert_row(self.table,
+                            name=builder.properties.name,
+                            id_notion=builder.properties.id,
+                            music_project_id=music_project_id,
+                            contact_id=contact_id,
+                            note=builder.properties.note,
+                            status=builder.properties.status)
 
-    #         location_id = self.__get_foreign_key(self.app,
-    #                                              task.properties.location_id,
-    #                                              LocationTable)
 
-    #         music_project_id = self.__get_foreign_key(self.app,
-    #                                                   task.properties.music_project_id,
-    #                                                   MusicProjectTable)
+class TaskDB(ProjectNotionToDB):
 
-    #         self.__insert_row(self.app,
-    #                           TaskTable,
-    #                           id_notion=task.properties.id,
-    #                           name=task.properties.name,
-    #                           start_date_time=task.properties.start_date_time,
-    #                           end_date_time=task.properties.end_date_time,
-    #                           type=task.properties.type,
-    #                           music_project_id=music_project_id,
-    #                           location_id=location_id)
+    def __init__(self,
+                 db_session: Session,
+                 database_path: str,
+                 notion_db: dict):
+        super().__init__(db_session, database_path, notion_db,
+                         TaskTable, TaskBuilder)
 
-    #     self.__print_table(self.app, TaskTable, "Task table",
-    #                        print_table=c.PRINT_TABLE_MUSIC_TASK)
+    def __parse_tasks(self, tasks_dict: dict):
+
+        excluded_list = []
+        for i, page in enumerate(tasks_dict['results']):
+            if not page['properties']['Type']['select']:
+                excluded_list.append(i)
+            else:
+                if page['properties']['Type']['select']['name'] != 'Rehearsal' and page['properties']['Type']['select']['name'] != 'Concert':
+                    excluded_list.append(i)
+
+        for index in reversed(excluded_list):
+
+            del tasks_dict['results'][index]
+
+        return tasks_dict
+    
+    def insert_data_in_db(self):
+        
+        parsed_notion_task_db = self.__parse_tasks(self.notion_db)
+        for page in parsed_notion_task_db['results']:
+
+            builder: Builder = self.get_builder(self.builder, page)
+
+            music_project_id = self.get_foreign_key(builder.properties.music_project_id,
+                                                    MusicProjectTable)
+
+            location_id = self.get_foreign_key(builder.properties.location_id,
+                                               LocationTable)
+            self.insert_row(self.table,
+                            id_notion=builder.properties.id,
+                            name=builder.properties.name,
+                            start_date_time=builder.properties.start_date_time,
+                            end_date_time=builder.properties.end_date_time,
+                            type=builder.properties.type,
+                            music_project_id=music_project_id,
+                            location_id=location_id)

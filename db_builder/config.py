@@ -8,7 +8,7 @@ def set_env_var(env: str, default: str=None):
         raise ValueError(f'{env} must be set')
     return env
 
-load_dotenv('.env')
+load_dotenv('.env-db_builder')
 
 NOTION_API_TOKEN = set_env_var('NOTION_API_TOKEN')
 
