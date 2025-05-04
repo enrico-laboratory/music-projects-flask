@@ -1,5 +1,7 @@
+!env-sample
 .venv
-.env
+.env*
+
 instance
 database_json
 

@@ -3,8 +3,8 @@ from pprint import pprint as pp
 import pytest
 
 from utils import Notion
-from notion_db.builder import LocationBuilder
-from notion_db import config
+from db_builder.builder import LocationBuilder
+from db_builder import config
 
 @pytest.fixture
 def notion():

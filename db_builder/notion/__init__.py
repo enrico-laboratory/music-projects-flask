@@ -1,4 +1,4 @@
-from notion_db.notion.models import (
+from db_builder.notion.models import (
     MusicProjectNotionModel,
     ChoirNotionModel,
     LocationNotionModel,
@@ -8,3 +8,5 @@ from notion_db.notion.models import (
     RoleNotionModel,
     PartAllocationNotionModel
 )
+
+from db_builder.notion.database import NotionDatabase

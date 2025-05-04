@@ -1,16 +1,19 @@
 from flask import Flask
 from dotenv import load_dotenv
-
-from frontend import config 
-
-load_dotenv()
+from flask_jwt_extended import JWTManager
 
 app = Flask(__name__)
-app.config.from_envvar('CONFIG_FILE_PATH')
+app.config.from_object('frontend.config')
+jwt = JWTManager(app)
 
-
-from frontend import routes
-from frontend.routes import project_blp
-
+from frontend.routes import project
+from frontend.routes.project import project_blp
+from frontend.routes.main import blp
+from frontend.helpers import is_authenticated
 
 app.register_blueprint(project_blp, url_prefix='/project')
+app.register_blueprint(blp, url_prefix='/')
+
+@app.context_processor
+def inject_auth_status():
+    return {'is_authenticated': is_authenticated()}

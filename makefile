@@ -2,4 +2,7 @@ frontend:
 	CONFIG_FILE_PATH=../config.py flask --app frontend run -p 5001 --debug	
 
 backend:
-	CONFIG_FILE_PATH=../config.py flask --app backend run -p 5000 --debug	
+	CONFIG_FILE_PATH=../config.py flask --app backend run -p 5000 --debug
+
+authenticator:
+	flask --app authenticator run -p 5002 --debug

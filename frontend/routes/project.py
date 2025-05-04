@@ -1,9 +1,11 @@
 import json
-from datetime import datetime, timedelta
+
+from datetime import timedelta
 from dateutil.parser import parse
-from pprint import pprint as pp
+
 
 from flask import Blueprint, render_template, request, abort
+from flask_jwt_extended import jwt_required
 import requests
 
 from frontend import app, config
@@ -12,10 +14,11 @@ from frontend import app, config
 project_blp = Blueprint('project', __name__)
 
 
-@app.route('/')
-def home():
-    return render_template('home.html.jinja')
-
+@project_blp.before_request
+@jwt_required()
+def before_request():
+    """ Protect all of the project endpoints. """
+    pass 
 
 @project_blp.route('/')
 def projects():
@@ -171,3 +174,4 @@ def get_divisi_range(divisi: list[dict]):
 
     
     return general_count
+

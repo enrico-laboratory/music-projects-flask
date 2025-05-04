@@ -8,11 +8,11 @@ from sqlalchemy.orm import Mapped
 
 # TODO Replace values with ENUM
 
-class Base(DeclarativeBase):
+class ProjectBase(DeclarativeBase):
     pass
 
 
-class ChoirTable(Base):
+class ChoirTable(ProjectBase):
     __tablename__ = 'choir'
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -23,7 +23,7 @@ class ChoirTable(Base):
         return f"ChoirTable(id={self.id!r}, id_notion={self.id_notion!r}, name={self.name!r})"
 
 
-class ContactTable(Base):
+class ContactTable(ProjectBase):
     __tablename__ = 'contacts'
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -41,7 +41,7 @@ class ContactTable(Base):
         return f"ContactTable(id={self.id!r}, name={self.name!r}, email1={self.email1!r})"
 
 
-class LocationTable(Base):
+class LocationTable(ProjectBase):
     __tablename__ = 'locations'
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -55,7 +55,7 @@ class LocationTable(Base):
         return f"LocationTable(id={self.id!r}, name={self.name!r}, city={self.city!r})"
 
 
-class MusicTable(Base):
+class MusicTable(ProjectBase):
     __tablename__ = 'music'
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -75,7 +75,7 @@ class MusicTable(Base):
         return f"MusicTable(id={self.id!r}, name={self.name!r}, composer={self.composer!r})"
 
 
-class MusicProjectTable(Base):
+class MusicProjectTable(ProjectBase):
     __tablename__ = 'music_project'
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -93,7 +93,7 @@ class MusicProjectTable(Base):
         return f"MusicProjectTable(id={self.id!r}, name={self.name!r}, year={self.year!r}, choir_id={self.choir_id!r})"
 
 
-class PartAllocationTable(Base):
+class PartAllocationTable(ProjectBase):
     __tablename__ = 'part_allocation'
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -126,7 +126,7 @@ class PartAllocationTable(Base):
         return f"PartAllocationTable(id={self.id!r}, name={self.name!r}, music_id={self.music_id!r}, music_project_id={self.music_project_id!r}, staff_1={self.staff_1!r})"
 
 
-class RoleTable(Base):
+class RoleTable(ProjectBase):
     __tablename__ = "role"
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -146,7 +146,7 @@ class RoleTable(Base):
         return f"RoleTable(id={self.id!r}, name={self.name!r}, music_project_id={self.music_project_id!r}, contact_id={self.contact_id!r}, status={self.status!r})"
 
 
-class TaskTable(Base):
+class TaskTable(ProjectBase):
     __tablename__ = 'tasks'
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -167,3 +167,4 @@ class TaskTable(Base):
 
     def __repr__(self) -> str:
         return f"TaskTable(id={self.id!r}, name={self.name!r}, start_date_time={self.start_date_time!r}, end_date_time={self.end_date_time!r}, type={self.type!r}, music_project_id={self.music_project_id!r})"
+

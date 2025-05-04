@@ -1,5 +1,5 @@
-from notion_db.db.table import (
-    Base, ChoirTable, LocationTable, 
+from db_builder.db.table import (
+    ProjectBase, ChoirTable, LocationTable, 
     MusicProjectTable, 
     TaskTable, 
     MusicTable, 

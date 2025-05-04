@@ -3,7 +3,7 @@ import json
 import pytest
 
 from utils import Notion
-from notion_db import config
+from db_builder import config
 
 @pytest.fixture
 def notion():

@@ -16,7 +16,7 @@ from backend.schemas import (
     PlainTaskSchema
 )
 
-from notion_db import (
+from db_builder import (
     ChoirTable,
     ContactTable,
     LocationTable,

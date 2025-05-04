@@ -1,5 +1,5 @@
-from notion_db.builder import Builder
-from notion_db.notion import MusicNotionModel
+from db_builder.builder import Builder
+from db_builder.notion import MusicNotionModel
 
 
 class MusicBuilder(Builder):
