@@ -2,9 +2,8 @@ from pathlib import Path
 import shutil
 from datetime import datetime
 
-from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import SQLAlchemyError
-from flask import Flask
+from sqlalchemy.orm import Session
 
 from db_builder import config as c
 from db_builder.db import ProjectBase
@@ -62,17 +61,17 @@ def delete_database_if_exists(database_path: str):
 class ProjectNotionToDB:
 
     def __init__(self,
-                 app: Flask,
-                 db: SQLAlchemy,
+                 db_session: Session,
                  database_path: str,
                  notion_db: dict,
-                 table: ProjectBase):
+                 table: ProjectBase,
+                 builder: Builder):
 
-        self.app = app
-        self.db = db
+        self.db_session = db_session
         self.database_path = database_path
         self.notion_db = notion_db
         self.table = table
+        self.builder = builder
 
     def get_builder(self, builder_class: Builder, page: dict, ) -> Builder:
 
@@ -83,13 +82,12 @@ class ProjectNotionToDB:
 
         return builder_obj
 
-    def insert_row(self, app: Flask, db: SQLAlchemy, table: any, **kargs):
+    def insert_row(self, table: any, **kargs):
 
         try:
-            with app.app_context():
-                row = table(**kargs)
-                db.session.add(row)
-                db.session.commit()
+            row = table(**kargs)
+            self.db_session.add(row)
+            self.db_session.commit()
 
         except SQLAlchemyError as e:
             raise e
@@ -112,11 +110,10 @@ class ProjectNotionToDB:
 
         return tasks_dict
 
-    def __get_foreign_key(self, app: Flask, notion_id: str, table) -> int:
+    def __get_foreign_key(self, notion_id: str, table) -> int:
 
-        with app.app_context():
-            row = self.db.session.query(table).filter_by(
-                id_notion=notion_id).first()
+        row = self.db_session.query(table).filter_by(
+            id_notion=notion_id).first()
 
         if not row:
 
@@ -129,102 +126,104 @@ class ProjectNotionToDB:
         if title:
             print(f'==== {title} ====')
 
-        with self.app.app_context():
-            response = self.db.session.query(self.table).all()
-            for row in response:
-                print(row)
+        response = self.db_session.query(self.table).all()
+        for row in response:
+            print(row)
 
 
 class ChoirDB(ProjectNotionToDB):
 
     def __init__(self,
-                 app: Flask,
-                 db: SQLAlchemy,
+                 db_session: Session,
                  database_path: str,
                  notion_db: dict):
-        super().__init__(app, db, database_path, notion_db, ChoirTable)
+        super().__init__(db_session, database_path, notion_db, ChoirTable, ChoirBuilder)
 
     def insert_data_in_db(self):
 
         for page in self.notion_db['results']:
 
-            choir: ChoirBuilder = self.get_builder(ChoirBuilder, page)
+            choir: Builder = self.get_builder(self.builder, page)
 
-            self.insert_row(self.app, self.db, self.table, id_notion=choir.properties.id,
+            self.insert_row(self.table,
+                            id_notion=choir.properties.id,
                             name=choir.properties.name)
-            
-    #     self.__print_table(self.app, ChoirTable, "Choirs",
-    #                        print_table=c.PRINT_TABLE_CHOIR)
 
-    #     ### CONTACT ###
-    #     contacts_dict = self.__get_notion_database_from_file_or_api(
-    #         notion.get_contacts,
-    #         'contacts.json',
-    #         from_file=c.FROM_FILE)
 
-    #     for page in contacts_dict['results']:
+class ContactDB(ProjectNotionToDB):
 
-    #         contact: ContactBuilder = self.__get_builder(ContactBuilder, page)
+    def __init__(self,
+                 db_session: Session,
+                 database_path: str,
+                 notion_db: dict):
+        super().__init__(db_session, database_path, notion_db, ContactTable, ContactBuilder)
 
-    #         self.__insert_row(self.app,
-    #                           ContactTable,
-    #                           id_notion=contact.properties.id,
-    #                           name=contact.properties.name,
-    #                           role=contact.properties.role,
-    #                           email1=contact.properties.email1,
-    #                           email2=contact.properties.email2,
-    #                           address=contact.properties.address,
-    #                           phone=contact.properties.phone,
-    #                           notes=contact.properties.notes,
-    #                           voice=contact.properties.voice)
+    def insert_data_in_db(self):
 
-    #     self.__print_table(self.app, ContactTable, "Table",
-    #                        print_table=c.PRINT_TABLE_CONTACT)
+        for page in self.notion_db['results']:
 
-    #     ### LOCATIONS ###
-    #     location_dict = self.__get_notion_database_from_file_or_api(
-    #         notion.get_locations,
-    #         'location.json',
-    #         from_file=c.FROM_FILE
-    #     )
+            contact: Builder = self.get_builder(self.builder, page)
 
-    #     for page in location_dict['results']:
+            self.insert_row(self.table,
+                            id_notion=contact.properties.id,
+                            name=contact.properties.name,
+                            role=contact.properties.role,
+                            email1=contact.properties.email1,
+                            email2=contact.properties.email2,
+                            address=contact.properties.address,
+                            phone=contact.properties.phone,
+                            notes=contact.properties.notes,
+                            voice=contact.properties.voice)
 
-    #         location: LocationBuilder = self.__get_builder(
-    #             LocationBuilder, page)
 
-    #         self.__insert_row(self.app,
-    #                           LocationTable,
-    #                           id_notion=location.properties.id,
-    #                           name=location.properties.name,
-    #                           city=location.properties.city,
-    #                           address=location.properties.address,
-    #                           purpose=location.properties.purpose)
+class LocationDB(ProjectNotionToDB):
 
-    #     self.__print_table(self.app, LocationTable, "Locations",
-    #                        print_table=c.PRINT_TABLE_LOCATION)
+    def __init__(self,
+                 db_session: Session,
+                 database_path: str,
+                 notion_db: dict):
+        super().__init__(db_session, database_path,
+                         notion_db, LocationTable, LocationBuilder)
 
-    #     ### MUSIC ###
-    #     music_dict = self.__get_notion_database_from_file_or_api(
-    #         notion.get_music,
-    #         'music.json',
-    #         from_file=c.FROM_FILE)
+    def insert_data_in_db(self):
 
-    #     for page in music_dict['results']:
+        for page in self.notion_db['results']:
 
-    #         music: MusicBuilder = self.__get_builder(MusicBuilder, page)
-    #         self.__insert_row(self.app,
-    #                           MusicTable,
-    #                           id_notion=music.properties.id,
-    #                           name=music.properties.name,
-    #                           composer=music.properties.composer,
-    #                           voices=music.properties.voices,
-    #                           instruments=music.properties.instruments,
-    #                           solo=music.properties.solo,
-    #                           length=music.properties.length,
-    #                           score=music.properties.score,
-    #                           media=music.properties.media,
-    #                           recording=music.properties.recording)
+            builder: Builder = self.get_builder(self.builder, page)
+
+            self.insert_row(self.table,
+                            id_notion=builder.properties.id,
+                            name=builder.properties.name,
+                            city=builder.properties.city,
+                            address=builder.properties.address,
+                            purpose=builder.properties.purpose)
+
+
+class MusicDB(ProjectNotionToDB):
+
+    def __init__(self,
+                 db_session: Session,
+                 database_path: str,
+                 notion_db: dict):
+        super().__init__(db_session, database_path, notion_db, MusicTable, MusicBuilder)
+
+    def insert_data_in_db(self):
+
+        for page in self.notion_db['results']:
+
+            builder: Builder = self.get_builder(self.builder, page)
+
+            self.insert_row(self.table,
+                            id_notion=builder.properties.id,
+                            name=builder.properties.name,
+                            composer=builder.properties.composer,
+                            voices=builder.properties.voices,
+                            instruments=builder.properties.instruments,
+                            solo=builder.properties.solo,
+                            length=builder.properties.length,
+                            score=builder.properties.score,
+                            media=builder.properties.media,
+                            recording=builder.properties.recording)
 
     #     self.__print_table(self.app, MusicTable, "Music",
     #                        print_table=c.PRINT_TABLE_MUSIC)
