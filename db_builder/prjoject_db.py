@@ -5,7 +5,6 @@ from datetime import datetime
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from db_builder.db import ProjectBase
 from db_builder import (
     Builder,
     MusicProjectBuilder,
@@ -17,7 +16,7 @@ from db_builder import (
     RoleBuilder,
     PartAllocationBuilder
 )
-from db_builder import (
+from models.project_tables import (
     ProjectBase,
     ChoirTable,
     MusicProjectTable,
