@@ -15,18 +15,15 @@ logging.basicConfig(format='%(asctime)s [%(name)s] %(levelname)s: %(message)s',
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
+app = Flask(__name__)
+app.config.from_object('backend.config')
 
-def create_app() -> Flask:
+api = Api(app)
 
-    app = Flask(__name__)
-    app.config.from_object('backend.config')
-    
-    api = Api(app)
-    
-    jwt = JWTManager(app)
-    
-    api.register_blueprint(project_blp, url_prefix='/projects')
+jwt = JWTManager(app)
 
-    db.init_app(app)
+api.register_blueprint(project_blp, url_prefix='/projects')
 
-    return app
+db.init_app(app)
+
+
