@@ -37,6 +37,9 @@ def login():
             set_access_cookies(resp, encoded_access_token=token)
             
             return resp
+        
+        if response.status_code == 422:
+            log.error(response.text)
 
         if response.status_code == 401:
             flash('email and password combination not valid', 'danger')

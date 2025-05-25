@@ -8,7 +8,7 @@ from flask import Blueprint, render_template, request, abort
 from flask_jwt_extended import jwt_required
 import requests
 
-from frontend import app, config
+from frontend import config
 
 
 project_blp = Blueprint('project', __name__)

@@ -1,6 +1,8 @@
 from flask import Flask
-from dotenv import load_dotenv
 from flask_jwt_extended import JWTManager
+from dotenv import load_dotenv
+
+load_dotenv('.env-frontend')
 
 app = Flask(__name__)
 app.config.from_object('frontend.config')

@@ -1,8 +1,7 @@
 import jwt
 from functools import wraps
 
-import requests
-from flask import request, abort, session, redirect, url_for, flash
+from flask import session, redirect, url_for, flash
 
 from frontend import app
 
