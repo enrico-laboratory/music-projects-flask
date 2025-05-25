@@ -1,6 +1,6 @@
-@hostname_auth = http://localhost:5002
 @hostname = http://localhost:5000
 @project_path = projects
+@access_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NjQ3MzI5MSwianRpIjoiYmZlNWFkNDctODUyYS00MTkxLWFjNWQtZGI1ZDQ5MzlkZGExIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjEiLCJuYmYiOjE3NDY0NzMyOTEsImNzcmYiOiIwMTQyNjAwZC1lNzg3LTRmNTItOGE1Zi0xMzNkNGVhNTU5MGYiLCJleHAiOjE3NDY0NzQxOTF9.yDR2H-dp4PAHm-QjqayTbIFR0ySk3r_23G0vI0LOyFQ
 
 ###
 GET {{hostname}}/{{project_path}}/choir
@@ -36,39 +36,20 @@ GET {{hostname}}/{{project_path}}/part_allocation/1
 
 ###
 GET {{hostname}}/{{project_path}}/role
+
 ###
 GET {{hostname}}/{{project_path}}/role?project_id=12
 ### 
 GET {{hostname}}/{{project_path}}/role/90
+Authorization: Bearer {{ access_token }}
 
 ### 
 GET {{hostname}}/{{project_path}}/task
+Authorization: Bearer {{ access_token }}
 ### 
 GET {{hostname}}/{{project_path}}/task/45
+Authorization: Bearer {{ access_token }}
 ### 
 GET {{hostname}}/{{project_path}}/task?filter=Palestrina and Marenzio&sort=older
 
-###
-POST {{hostname_auth}}/api/register HTTP/1.1
-content-type: application/json
 
-{
-    "email": "user1@fake.email",
-    "password": "12345"
-}
-
-###
-POST {{hostname_auth}}/api/login
-content-type: application/json
-
-{
-    "email": "user1@fake.email",
-    "password": "12345"
-}
-
-###
-GET {{hostname_auth}}/api/user/1
-###
-GET {{hostname_auth}}/api/users?email=enr.ruggiceri.mail@gmail.com&cazzi=amari
-###
-DELETE {{hostname_auth}}/api/user/3

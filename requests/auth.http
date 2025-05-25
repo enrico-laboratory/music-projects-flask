@@ -1,0 +1,28 @@
+@hostname_auth = http://localhost:5002
+
+### Register
+POST {{hostname_auth}}/api/register HTTP/1.1
+content-type: application/json
+
+{
+    "username": "fakeuser",
+    "email": "user2@fake.email",
+    "password": "12345",
+    "role": "contributor"
+}
+
+### Login
+POST {{hostname_auth}}/api/login
+content-type: application/json
+
+{
+    "email": "user2@fake.email",
+    "password": "12345"
+}
+
+### User
+GET {{hostname_auth}}/api/user/1
+###
+GET {{hostname_auth}}/api/users?email=enr.ruggiceri.mail@gmail.com&cazzi=amari
+###
+DELETE {{hostname_auth}}/api/user/3
